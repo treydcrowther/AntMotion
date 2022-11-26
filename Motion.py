@@ -154,10 +154,36 @@ def Stand(ser):
 
 
 # Move the right leg farther forward on the step to counteract right movement
-walkPositionOne = {LFH:1300, LFK:1000, LFA:1400, LMH:1700, LMK:1700, LMA:1400, LRH:1300, LRK:1000, LRA:1400, RRH:1300, RRK:1600, RRA:1600, RMH:1700, RMK:2000, RMA:1600, RFH:1300, RFK:1600, RFA:1600  }
-walkPositionTwo = {LFH:1300, LFK:1800, LFA:1400, LMH:1700, LMK:1700, LMA:1400, LRH:1300, LRK:1800, LRA:1400, RRH:1300, RRK:1600, RRA:1600, RMH:1700, RMK:1200, RMA:1600, RFH:1300, RFK:1600, RFA:1600  }
-walkPositionThree = {LFH:1700, LFK:1800, LFA:1400, LMH:1300, LMK:1000, LMA:1400, LRH:1700, LRK:1800, LRA:1400, RRH:1700, RRK:2000, RRA:1600, RMH:1300, RMK:1200, RMA:1600, RFH:1700, RFK:2000, RFA:1600  }
-walkPositionFour = {LFH:1700, LFK:1800, LFA:1400, LMH:1300, LMK:1800, LMA:1400, LRH:1700, LRK:1800, LRA:1400, RRH:1700, RRK:1200, RRA:1600, RMH:1300, RMK:1200, RMA:1600, RFH:1700, RFK:1200, RFA:1600  }
+walkPositionOne = {LFH:1100, LFK:1000, LFA:1400, LMH:1900, LMK:1700, LMA:1400, LRH:1200, LRK:1000, LRA:1400, RRH:1100, RRK:1600, RRA:1600, RMH:1500, RMK:2000, RMA:1600, RFH:1400, RFK:1600, RFA:1600  }
+walkPositionTwo = {LFH:1100, LFK:1800, LFA:1400, LMH:1900, LMK:1700, LMA:1400, LRH:1200, LRK:1800, LRA:1400, RRH:1100, RRK:1600, RRA:1600, RMH:1500, RMK:1200, RMA:1600, RFH:1400, RFK:1600, RFA:1600  }
+walkPositionThree = {LFH:1500, LFK:1800, LFA:1400, LMH:1500, LMK:1000, LMA:1400, LRH:1600, LRK:1800, LRA:1400, RRH:1500, RRK:2000, RRA:1600, RMH:1100, RMK:1200, RMA:1600, RFH:1800, RFK:2000, RFA:1600  }
+walkPositionFour = {LFH:1500, LFK:1800, LFA:1400, LMH:1500, LMK:1800, LMA:1400, LRH:1600, LRK:1800, LRA:1400, RRH:1500, RRK:1200, RRA:1600, RMH:1100, RMK:1200, RMA:1600, RFH:1800, RFK:1200, RFA:1600  }
+
+rotateLeftPositionOne = { LFH:1400, LFK:1000, LMK:1400, LRH:1400, LRK:1000, RRK:1600, RMH:1500, RMK:2000, RFK:1600}
+rotateLeftPositionTwo = { LFH:1800, LFK:1000, LMK:1400, LRH:1800, LRK:1000, RRK:1600, RMH:1800, RMK:2000, RFK:1600}
+rotateLeftPositionThree = { LFH:1800, LFK:1400, LMK:1400, LRH:1800, LRK:1600, RRK:1600, RMH:1800, RMK:1650, RFK:1600}
+rotateLeftPositionFour = { LFH:1800, LFK:1800, LMK:1000, LRH:1800, LRK:1600, RRK:2000, RMH:1800, RMK:1300, RFK:2000}
+rotateLeftPositionFive = { LFH:1400, LFK:1800, LMK:1000, LRH:1400, LRK:1600, RRK:2000, RMH:1500, RMK:1300, RFK:1200}
+
+rotateRightPositionOne = { LFH:1400, LFK:1000, LMK:1400, LRH:1400, LRK:1000, RRK:1600, RMH:1500, RMK:2000, RFK:1600}
+rotateRightPositionTwo = { LFH:1000, LFK:1000, LMK:1400, LRH:1000, LRK:1000, RRK:1600, RMH:1500, RMK:2000, RFK:1600}
+rotateRightPositionThree = { LFH:1000, LFK:1400, LMK:1400, LRH:1000, LRK:1600, RRK:1600, RMH:1200, RMK:1650, RFK:1600}
+rotateRightPositionFour = { LFH:1000, LFK:1800, LMK:1000, LRH:1000, LRK:1600, RRK:2000, RMH:1200, RMK:1300, RFK:2000}
+rotateRightPositionFive = { LFH:1400, LFK:1800, LMK:1000, LRH:1400, LRK:1600, RRK:2000, RMH:1500, RMK:1300, RFK:1200}
+
+
+minimalRotateLeftPositionOne = { LFH:1400, LFK:1000, LMK:1400, LRH:1400, LRK:1000, RRK:1600, RMH:1500, RMK:2000, RFK:1600, RRA: 1700, LRA: 1200}
+minimalRotateLeftPositionTwo = { LFH:1500, LFK:1000, LMK:1400, LRH:1500, LRK:1000, RRK:1600, RMH:1600, RMK:2000, RFK:1600}
+minimalRotateLeftPositionThree = { LFH:1500, LFK:1400, LMK:1400, LRH:1500, LRK:1600, RRK:1600, RMH:1600, RMK:1650, RFK:1600}
+minimalRotateLeftPositionFour = { LFH:1500, LFK:1800, LMK:1000, LRH:1500, LRK:1600, RRK:2000, RMH:1600, RMK:1300, RFK:2000}
+minimalRotateLeftPositionFive = { LFH:1400, LFK:1800, LMK:1000, LRH:1400, LRK:1600, RRK:2000, RMH:1500, RMK:1300, RFK:1200}
+
+minimalRotateRightPositionOne = { LFH:1400, LFK:1000, LMK:1400, LRH:1400, LRK:1000, RRK:1600, RMH:1500, RMK:2000, RFK:1600, RRA: 1700, LRA: 1200}
+minimalRotateRightPositionTwo = { LFH:1000, LFK:1000, LMK:1400, LRH:1000, LRK:1000, RRK:1600, RMH:1500, RMK:2000, RFK:1600}
+minimalRotateRightPositionThree = { LFH:1000, LFK:1400, LMK:1400, LRH:1000, LRK:1600, RRK:1600, RMH:1200, RMK:1650, RFK:1600}
+minimalRotateRightPositionFour = { LFH:1000, LFK:1800, LMK:1000, LRH:1000, LRK:1600, RRK:2000, RMH:1200, RMK:1300, RFK:2000}
+minimalRotateRightPositionFive = { LFH:1400, LFK:1800, LMK:1000, LRH:1400, LRK:1600, RRK:2000, RMH:1500, RMK:1300, RFK:1200}
+
 
 def CommandThreeLeg(ser, left):
     if(left):
@@ -179,27 +205,77 @@ def CommandThreeLeg(ser, left):
     # ControlBothSides(ser, liftLegs[1][0], liftLegs[1][1], 1300)
 
 def StandingPosition(ser):
-    time.sleep(2)
     CommandDictToPosition(ser, standPosition, 200)
 
 def SittingPosition(ser):
     time.sleep(2)
     CommandDictToPosition(ser, sitPosition, 200)
 
+
 def WalkOneStep(ser):
-    CommandDictToPosition(ser, walkPositionOne, 200)
-    CommandDictToPosition(ser, walkPositionTwo, 200)
-    CommandDictToPosition(ser, walkPositionThree, 200)
-    CommandDictToPosition(ser, walkPositionFour, 200)
+    CommandDictToPosition(ser, walkPositionOne, 50)
+    CommandDictToPosition(ser, walkPositionTwo, 50)
+    # StandingPosition(ser)
+    CommandDictToPosition(ser, walkPositionThree, 50)
+    CommandDictToPosition(ser, walkPositionFour, 50)
+    StandingPosition(ser)
+
+# Rotate the robot 19 degrees
+def RotateRightOne(ser):
+    CommandDictToPosition(ser, rotateRightPositionOne, 50)
+    CommandDictToPosition(ser, rotateRightPositionTwo, 50)
+    CommandDictToPosition(ser, rotateRightPositionThree, 50)
+    CommandDictToPosition(ser, rotateRightPositionFour, 50)
+    CommandDictToPosition(ser, rotateRightPositionFive, 50)
+    CommandDictToPosition(ser, standPosition, 50)
+
+def RotateLeftOne(ser):
+    CommandDictToPosition(ser, rotateLeftPositionOne, 50)
+    CommandDictToPosition(ser, rotateLeftPositionTwo, 50)
+    CommandDictToPosition(ser, rotateLeftPositionThree, 50)
+    CommandDictToPosition(ser, rotateLeftPositionFour, 50)
+    CommandDictToPosition(ser, rotateLeftPositionFive, 50)
+    CommandDictToPosition(ser, standPosition, 50)
+
+
+def MinimalRotateLeftOne(ser):
+    CommandDictToPosition(ser, minimalRotateLeftPositionOne, 50)
+    CommandDictToPosition(ser, minimalRotateLeftPositionTwo, 50)
+    CommandDictToPosition(ser, minimalRotateLeftPositionThree, 50)
+    CommandDictToPosition(ser, minimalRotateLeftPositionFour, 50)
+    CommandDictToPosition(ser, minimalRotateLeftPositionFive, 50)
+    CommandDictToPosition(ser, standPosition, 50)
+
+def MinimalRotateRightOne(ser):
+    CommandDictToPosition(ser, minimalRotateRightPositionOne, 50)
+    CommandDictToPosition(ser, minimalRotateRightPositionTwo, 50)
+    CommandDictToPosition(ser, minimalRotateRightPositionThree, 50)
+    CommandDictToPosition(ser, minimalRotateRightPositionFour, 50)
+    CommandDictToPosition(ser, minimalRotateRightPositionFive, 50)
+    CommandDictToPosition(ser, standPosition, 50)
+
+# def Rotate(ser):
+    
 
 
 def main():
     ser = serial.Serial(scp, baudRate)
-    Sit(ser)
-    Stand(ser)
+    # Sit(ser)
+    # Stand(ser)
 
-    for i in range(0, 3):
-        WalkOneStep(ser)
+    # CenterHeadAndTail(ser)
+
+    MoveSingleMotor(ser, RMK, 1800)    
+    # for i in range(0, 10):
+    #     MinimalRotateLeftOne(ser)
+    # for i in range(0, 14):
+    #     RotateRightOne(ser)
+
+    # for i in range(0, 3):
+    #     RotateLeftOne(ser)
+
+    # for i in range(0, 30):
+    #     WalkOneStep(ser)
     # CommandThreeLeg(ser, True)
     # CommandThreeLeg(ser, False)
     # CommandThreeLeg(ser, True)
@@ -210,6 +286,7 @@ def main():
     #     CommandThreeLeg(ser, False)
     #     CommandThreeLeg(ser, True)
     #     CommandThreeLeg(ser, False)
+
     #     CommandThreeLeg(ser, True)
     #     CommandThreeLeg(ser, False)
     #     CommandThreeLeg(ser, True)

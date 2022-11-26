@@ -30,6 +30,8 @@ from threading import Thread
 import importlib.util
 import requests
 import json
+import Motion
+import serial
 
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
 # Source - Adrian Rosebrock, PyImageSearch: https://www.pyimagesearch.com/2015/12/28/increasing-raspberry-pi-fps-with-python-and-opencv/
@@ -37,7 +39,7 @@ class VideoStream:
     """Camera object that controls video streaming from the Picamera"""
     def __init__(self,resolution=(640,480),framerate=30):
         # Initialize the PiCamera and the camera image stream
-        self.stream = cv2.VideoCapture(0)
+        self.stream = cv2.VideoCapture(-1)
         ret = self.stream.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
         ret = self.stream.set(3,resolution[0])
         ret = self.stream.set(4,resolution[1])
@@ -169,10 +171,15 @@ freq = cv2.getTickFrequency()
 videostream = VideoStream(resolution=(imW,imH),framerate=30).start()
 time.sleep(1)
 
-# Create window
+# Create window, uncomment this is you want to see the window
 cv2.namedWindow('Object detector', cv2.WINDOW_NORMAL)
 
+scp = '/dev/ttyS0'
+baudRate = 9600
+ser = serial.Serial(scp, baudRate)
+# Motion.CenterHeadAndTail(ser)
 #for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
+iFoundIt = False
 foundResult = False
 while not foundResult:
     # Check to see if we found the desired object before continuing
@@ -186,7 +193,6 @@ while not foundResult:
     # Use bounding box to calculate movement needed 
     if (response == True):
         # camera dimentions are roughly (0,0) to (1300, 700)
-        
         pass
     
         # If we are close enough to the desire object we no longer can use the camera so we can kill this while loop
@@ -249,22 +255,37 @@ while not foundResult:
             cv2.circle(frame, (650, 350), 5, (0,255,255), thickness=-1)
             objectX = xcenter
             # Print info
-            # print('Object ' + str(i) + ': ' + object_name + ' at (' +  str(xcenter) + ', ' + str(ycenter) + ')')
+            print('Object ' + str(i) + ': ' + object_name + ' at (' +  str(xcenter) + ', ' + str(ycenter) + ')')
 
-            if (object_name == "bottle" and response == False):
+            if ((object_name == "sports ball" or object_name == "apple" or object_name == "orange" or object_name == "person") and response == False and iFoundIt == False):
                 print("Found desired object!")
+                iFoundIt = True
 
                 # this is only temporary while we aren't acutally using the server
-                response = True
+                # response = True
 
                 # requests.post("http://144.39.216.38:3000/foundObject")
+            elif(iFoundIt and (object_name == "sports ball" or object_name == "apple" or object_name == "orange" or object_name == "person")):
+                scp = '/dev/ttyS0'
+                baudRate = 9600
+                # Motion.StandingPosition(serial.Serial(scp, baudRate))
+                print("xcenter: ", xcenter)
+                # lower y means to the right, higher y means to the left
+                print("ycenter: ", ycenter)
+                if(ycenter > 450):
+                    print("Moving left")
+                    Motion.MinimalRotateLeftOne(serial.Serial(scp, baudRate))
+                elif(ycenter < 350):
+                    print("Moving right")
+                    Motion.MinimalRotateRightOne(serial.Serial(scp, baudRate))
+
 
 
     # Draw framerate in corner of frame
     cv2.putText(frame,'FPS: {0:.2f}'.format(frame_rate_calc),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
 
     # All the results have been drawn on the frame, so it's time to display it.
-    cv2.imshow('Object detector', frame)
+    # cv2.imshow('Object detector', frame)
 
     # Calculate framerate
     t2 = cv2.getTickCount()
