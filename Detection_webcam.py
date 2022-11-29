@@ -33,6 +33,11 @@ import json
 import Motion
 import serial
 
+def CalcBoundingBoxSize(x1, x2, y1, y2):
+    width = x2 - x1
+    height = y2 - y1
+    return width * height
+
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
 # Source - Adrian Rosebrock, PyImageSearch: https://www.pyimagesearch.com/2015/12/28/increasing-raspberry-pi-fps-with-python-and-opencv/
 class VideoStream:
@@ -177,7 +182,8 @@ cv2.namedWindow('Object detector', cv2.WINDOW_NORMAL)
 scp = '/dev/ttyS0'
 baudRate = 9600
 ser = serial.Serial(scp, baudRate)
-# Motion.CenterHeadAndTail(ser)
+Motion.CenterHeadAndTail(ser)
+Motion.Stand(ser)
 #for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
 iFoundIt = False
 foundResult = False
@@ -229,8 +235,8 @@ while not foundResult:
 
     # Loop over all detections and draw detection box if confidence is above minimum threshold
     for i in range(len(scores)):
-        if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
-
+        # if (((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)) or (scores[i] >= .4 and labels[int(classes[i])] == "bottle")):
+        if ((scores[i] >= .4 and labels[int(classes[i])] == "bottle")):
             # Get bounding box coordinates and draw box
             # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
             ymin = int(max(1,(boxes[i][0] * imH)))
@@ -255,9 +261,9 @@ while not foundResult:
             cv2.circle(frame, (650, 350), 5, (0,255,255), thickness=-1)
             objectX = xcenter
             # Print info
-            print('Object ' + str(i) + ': ' + object_name + ' at (' +  str(xcenter) + ', ' + str(ycenter) + ')')
+            # print('Object ' + str(i) + ': ' + object_name + ' at (' +  str(xcenter) + ', ' + str(ycenter) + ')')
 
-            if ((object_name == "sports ball" or object_name == "apple" or object_name == "orange" or object_name == "person") and response == False and iFoundIt == False):
+            if ((object_name == "bottle") and response == False and iFoundIt == False):
                 print("Found desired object!")
                 iFoundIt = True
 
@@ -265,21 +271,31 @@ while not foundResult:
                 # response = True
 
                 # requests.post("http://144.39.216.38:3000/foundObject")
-            elif(iFoundIt and (object_name == "sports ball" or object_name == "apple" or object_name == "orange" or object_name == "person")):
+            elif(iFoundIt and (object_name == "bottle")):
                 scp = '/dev/ttyS0'
                 baudRate = 9600
                 # Motion.StandingPosition(serial.Serial(scp, baudRate))
-                print("xcenter: ", xcenter)
+                # print("xcenter: ", xcenter)
                 # lower y means to the right, higher y means to the left
-                print("ycenter: ", ycenter)
-                if(ycenter > 450):
+                # print("ycenter: ", ycenter)
+                boundingBox =  CalcBoundingBoxSize(xmin, xmax, ymin, ymax)
+                print("size of box: ", boundingBox)
+                if(xcenter < 625):
                     print("Moving left")
                     Motion.MinimalRotateLeftOne(serial.Serial(scp, baudRate))
-                elif(ycenter < 350):
+                elif(xcenter > 775):
                     print("Moving right")
                     Motion.MinimalRotateRightOne(serial.Serial(scp, baudRate))
-
-
+                else: 
+                    print("Centered")
+                    # Motion.StandingPosition(serial.Serial(scp, baudRate))
+                    Motion.WalkOneStep(serial.Serial(scp, baudRate))
+                    # foundResult = True
+                    if(boundingBox > 24000):
+                        print("Performing pickup maneuver")
+                        # Motion.WalkOneStep(serial.Serial(scp, baudRate))
+                        Motion.PickupManeuver(serial.Serial(scp, baudRate))
+                        foundResult = True
 
     # Draw framerate in corner of frame
     cv2.putText(frame,'FPS: {0:.2f}'.format(frame_rate_calc),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
