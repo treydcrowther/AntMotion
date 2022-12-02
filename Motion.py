@@ -61,7 +61,7 @@ MT = 14
 MLG = 28
 MRG = 29
 
-MandibleServos = [MR,MT,MLG,MRG]
+MandibleServos = [MY,MR,MT,MLG,MRG]
 
 ################################################
 # Tail Servo Key
@@ -100,7 +100,10 @@ def CenterHeadAndTail(ser):
 
     for servo in TailServos:
         command += SetPos(servo, 1500) + " "
-    command += SetPos(MR, 1450) + " "
+    command += SetPos(MT, 1500) + " "
+    command += SetPos(MRG, 1700) + " "
+    command += SetPos(MLG, 900) + " "
+    command += SetPos(MY, 1500) + " "
     ser.write(str.encode(command + "\r"))
 
 def ComputeRightPosition(position):
@@ -142,13 +145,14 @@ def Sit(ser):
 
 standPosition = {LFH:1400, LFK:1400, LFA:1400, LMH:1500, LMK:1400, LMA:1400, LRH:1400, LRK:1600, LRA:1400, RRH:1500, RRK:1600, RRA:1600, RMH:1500, RMK:1650, RMA:1600, RFH:1700, RFK:1600, RFA:1600  }
 sitPosition = {LFH:1500, LFK:750, LFA:750, LMH:1500, LMK:750, LMA:750, LRH:1500, LRK:850, LRA:750, RRH:1500, RRK:2300, RRA:2300, RMH:1500, RMK:2300, RMA:2300, RFH:1500, RFK:2300, RFA:2300  }
-openMandibles = {MRG: 1500, MLG: 1500}
+openMandibles = {MRG: 1300, MLG: 1300}
 reachDownPosition = {MT:1900}
 grabPosition = {MLG: 600, MRG: 1700}
 liftPosition =  {MT:1000}
 
-def PickupManeuver(ser):
-    for i in range(0, 10):
+def PickupManeuver(ser, steps = 3):
+    CommandDictToPosition(ser, openMandibles, 200)
+    for i in range(0, steps):
         WalkOneStep(ser)
     ReachDownAndGrab(ser)
     
@@ -173,10 +177,10 @@ def Stand(ser):
 
 
 # Move the right leg farther forward on the step to counteract right movement
-walkPositionOne = {LFH:1000, LFK:1000, LFA:1400, LMH:1900, LMK:1700, LMA:1400, LRH:1200, LRK:1000, LRA:1200, RRH:1100, RRK:1600, RRA:1700, RMH:1500, RMK:2000, RMA:1600, RFH:1400, RFK:1600, RFA:1600  }
-walkPositionTwo = {LFH:1000, LFK:1800, LFA:1400, LMH:1900, LMK:1700, LMA:1400, LRH:1200, LRK:1800, LRA:1200, RRH:1100, RRK:1600, RRA:1700, RMH:1500, RMK:1200, RMA:1600, RFH:1400, RFK:1600, RFA:1600  }
-walkPositionThree = {LFH:1500, LFK:1800, LFA:1400, LMH:1500, LMK:1000, LMA:1400, LRH:1600, LRK:1800, LRA:1200, RRH:1500, RRK:2000, RRA:1700, RMH:1100, RMK:1200, RMA:1600, RFH:1700, RFK:2000, RFA:1600  }
-walkPositionFour = {LFH:1500, LFK:1800, LFA:1400, LMH:1500, LMK:1800, LMA:1400, LRH:1600, LRK:1800, LRA:1200, RRH:1500, RRK:1200, RRA:1700, RMH:1100, RMK:1200, RMA:1600, RFH:1700, RFK:1200, RFA:1600  }
+walkPositionOne = {LFH:1100, LFK:1000, LFA:1400, LMH:1900, LMK:1700, LMA:1400, LRH:1200, LRK:1000, LRA:1200, RRH:1100, RRK:1600, RRA:1700, RMH:1500, RMK:2000, RMA:1600, RFH:1500, RFK:1600, RFA:1600  }
+walkPositionTwo = {LFH:1100, LFK:1800, LFA:1400, LMH:1900, LMK:1700, LMA:1400, LRH:1200, LRK:1800, LRA:1200, RRH:1100, RRK:1600, RRA:1700, RMH:1500, RMK:1200, RMA:1600, RFH:1500, RFK:1600, RFA:1600  }
+walkPositionThree = {LFH:1500, LFK:1800, LFA:1400, LMH:1500, LMK:1000, LMA:1400, LRH:1600, LRK:1800, LRA:1200, RRH:1500, RRK:2000, RRA:1700, RMH:1100, RMK:1200, RMA:1600, RFH:1600, RFK:2000, RFA:1625  }
+walkPositionFour = {LFH:1500, LFK:1800, LFA:1400, LMH:1500, LMK:1800, LMA:1400, LRH:1600, LRK:1800, LRA:1200, RRH:1500, RRK:1200, RRA:1700, RMH:1100, RMK:1200, RMA:1600, RFH:1600, RFK:1200, RFA:1625 }
 
 rotateRightPosition = { LFH:1800, LRH:1800, LMH:1800, RMH:1800, RRH:1800, RFH:1800}
 rotateLeftPosition = { LFH:1100, LRH:1100, LMH:1100, RMH:1100, RRH:1100, RFH:1100}
@@ -187,12 +191,16 @@ standPosition = {LFH:1400, LFK:1400, LFA:1400, LMH:1500, LMK:1400, LMA:1400, LRH
 
 
 moveBackToCenterOne = { LFK: 1000, LFH: 1400, RRK: 2000, RRH: 1500}
-moveBackToCenterTwo = { LFK: 1400, RRK: 1600}
+moveBackToCenterTwo = { LFK: 1400, RRK: 1600, LFA: 1400, RRA: 1600}
 moveBackToCenterThree = { LMK: 1000, LMH: 1500, RMK: 2000, RMH: 1500}
-moveBackToCenterFour = { LMK: 1400, RMK: 1600}
+moveBackToCenterFour = { LMK: 1400, RMK: 1600, LMA: 1400, RMA: 1600}
 moveBackToCenterFive = { LRK: 1000, LRH: 1400, RFK: 2000, RFH: 1700}
-moveBackToCenterSix = { LRK: 1400, RFK: 1600}
+moveBackToCenterSix = { LRK: 1400, RFK: 1600, LRA: 1400, RRA: 1600}
 
+
+def LowerHead(ser, extent = 1):
+    extent *= 150
+    CommandDictToPosition(ser, {MT: 1550 + extent}, 200)
 
 
 def CommandThreeLeg(ser, left):
@@ -240,40 +248,36 @@ def RotateRightOne(ser):
 
 def RotateLeftOne(ser):
     CommandDictToPosition(ser, rotateLeftPosition, 50)
+    time.sleep(.1)
+    MoveBackAfterRotation(ser)
+    time.sleep(.1)
+    CommandDictToPosition(ser, standPosition, 50)
+
+def MoveBackAfterRotation(ser):
+    CommandDictToPosition(ser, moveBackToCenterOne, 50)
+    time.sleep(.1)
+    CommandDictToPosition(ser, moveBackToCenterTwo, 50)
+    time.sleep(.1)
+    CommandDictToPosition(ser, moveBackToCenterThree, 50)
+    time.sleep(.1)
+    CommandDictToPosition(ser, moveBackToCenterFour, 50)
+    time.sleep(.1)
+    CommandDictToPosition(ser, moveBackToCenterFive, 50)
+    time.sleep(.1)
+    CommandDictToPosition(ser, moveBackToCenterSix, 50)
+    
+def MinimalRotateLeftOne(ser):
+    CommandDictToPosition(ser, minimalRotateLeftPosition, 50)
     time.sleep(.2)
     MoveBackAfterRotation(ser)
     time.sleep(.2)
     CommandDictToPosition(ser, standPosition, 50)
 
-def MoveBackAfterRotation(ser):
-    CommandDictToPosition(ser, moveBackToCenterOne, 50)
-    time.sleep(.5)
-    CommandDictToPosition(ser, moveBackToCenterTwo, 50)
-    time.sleep(.5)
-    CommandDictToPosition(ser, moveBackToCenterThree, 50)
-    time.sleep(.5)
-    CommandDictToPosition(ser, moveBackToCenterFour, 50)
-    time.sleep(.5)
-    CommandDictToPosition(ser, moveBackToCenterFive, 50)
-    time.sleep(.5)
-    CommandDictToPosition(ser, moveBackToCenterSix, 50)
-    
-
-
-def MinimalRotateLeftOne(ser):
-    CommandDictToPosition(ser, minimalRotateLeftPositionOne, 50)
-    CommandDictToPosition(ser, minimalRotateLeftPositionTwo, 50)
-    CommandDictToPosition(ser, minimalRotateLeftPositionThree, 50)
-    CommandDictToPosition(ser, minimalRotateLeftPositionFour, 50)
-    CommandDictToPosition(ser, minimalRotateLeftPositionFive, 50)
-    CommandDictToPosition(ser, standPosition, 50)
-
 def MinimalRotateRightOne(ser):
-    CommandDictToPosition(ser, minimalRotateRightPositionOne, 50)
-    CommandDictToPosition(ser, minimalRotateRightPositionTwo, 50)
-    CommandDictToPosition(ser, minimalRotateRightPositionThree, 50)
-    CommandDictToPosition(ser, minimalRotateRightPositionFour, 50)
-    CommandDictToPosition(ser, minimalRotateRightPositionFive, 50)
+    CommandDictToPosition(ser, minimalRotateRightPosition, 50)
+    time.sleep(.2)
+    MoveBackAfterRotation(ser)
+    time.sleep(.2)
     CommandDictToPosition(ser, standPosition, 50)
 
 # def Rotate(ser):
@@ -286,8 +290,8 @@ def main():
     # Stand(ser)
 
     # MoveSingleMotor(ser, LRK, 1000)
-    RotateLeftOne(ser)
-    RotateRightOne(ser)
+    # RotateLeftOne(ser)
+    # RotateRightOne(ser)
     # ReachDownAndGrab(ser)
     # Sit(ser)
     # Stand(ser)

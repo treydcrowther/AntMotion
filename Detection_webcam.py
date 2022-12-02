@@ -44,7 +44,7 @@ class VideoStream:
     """Camera object that controls video streaming from the Picamera"""
     def __init__(self,resolution=(640,480),framerate=30):
         # Initialize the PiCamera and the camera image stream
-        self.stream = cv2.VideoCapture(0)
+        self.stream = cv2.VideoCapture(-1)
         ret = self.stream.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
         ret = self.stream.set(3,resolution[0])
         ret = self.stream.set(4,resolution[1])
@@ -236,7 +236,7 @@ while not foundResult:
     # Loop over all detections and draw detection box if confidence is above minimum threshold
     for i in range(len(scores)):
         # if (((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)) or (scores[i] >= .4 and labels[int(classes[i])] == "bottle")):
-        if ((scores[i] >= .4 and labels[int(classes[i])] == "bottle")):
+        if ((scores[i] >= .2 and labels[int(classes[i])] == "bottle")):
             # Get bounding box coordinates and draw box
             # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
             ymin = int(max(1,(boxes[i][0] * imH)))
@@ -274,28 +274,39 @@ while not foundResult:
             elif(iFoundIt and (object_name == "bottle")):
                 scp = '/dev/ttyS0'
                 baudRate = 9600
-                # Motion.StandingPosition(serial.Serial(scp, baudRate))
-                # print("xcenter: ", xcenter)
-                # lower y means to the right, higher y means to the left
-                # print("ycenter: ", ycenter)
                 boundingBox =  CalcBoundingBoxSize(xmin, xmax, ymin, ymax)
                 print("size of box: ", boundingBox)
-                if(xcenter < 625):
+                print("xcenter: ", xcenter)
+                if(xcenter < 570):
                     print("Moving left")
                     Motion.MinimalRotateLeftOne(serial.Serial(scp, baudRate))
-                elif(xcenter > 775):
+                elif(xcenter > 730):
                     print("Moving right")
                     Motion.MinimalRotateRightOne(serial.Serial(scp, baudRate))
                 else: 
                     print("Centered")
                     # Motion.StandingPosition(serial.Serial(scp, baudRate))
+                    if(boundingBox > 40000):
+                        print("lowering head")
+                        Motion.LowerHead(ser)
+                    if(boundingBox > 80000):
+                        print("lowering head again")
+                        Motion.LowerHead(ser, 2)
                     Motion.WalkOneStep(serial.Serial(scp, baudRate))
                     # foundResult = True
-                    if(boundingBox > 24000):
+                    
+                    if(boundingBox > 170000):
                         print("Performing pickup maneuver")
                         # Motion.WalkOneStep(serial.Serial(scp, baudRate))
-                        Motion.PickupManeuver(serial.Serial(scp, baudRate))
+                        Motion.PickupManeuver(serial.Serial(scp, baudRate), 1)
                         foundResult = True
+                        break
+                    elif(boundingBox > 125000):
+                        print("Performing pickup maneuver 2")
+                        # Motion.WalkOneStep(serial.Serial(scp, baudRate))
+                        Motion.PickupManeuver(serial.Serial(scp, baudRate), 2)
+                        foundResult = True
+                        break
 
     # Draw framerate in corner of frame
     cv2.putText(frame,'FPS: {0:.2f}'.format(frame_rate_calc),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
