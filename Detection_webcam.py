@@ -10,7 +10,6 @@ import importlib.util
 import requests
 import json
 import Motion
-import serial
 
 def CalcBoundingBoxSize(x1, x2, y1, y2):
     width = x2 - x1
