@@ -1,24 +1,3 @@
-######## Webcam Object Detection Using Tensorflow-trained Classifier #########
-#
-# Author: Evan Juras
-# Date: 10/27/19
-# Description: 
-# This program uses a TensorFlow Lite model to perform object detection on a live webcam
-# feed. It draws boxes and scores around the objects of interest in each frame from the
-# webcam. To improve FPS, the webcam object runs in a separate thread from the main program.
-# This script will work with either a Picamera or regular USB webcam.
-#
-# This code is based off the TensorFlow Lite image classification example at:
-# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/examples/python/label_image.py
-#
-# I added my own method of drawing boxes and labels using OpenCV.
-# 
-# Modified by: Shawn Hymel
-# Date: 09/22/20
-# Description:
-# Added ability to resize cv2 window and added center dot coordinates of each detected object.
-# Objects and center coordinates are printed to console.
-
 # Import packages
 import os
 import argparse
@@ -191,52 +170,39 @@ cv2.namedWindow('Object detector', cv2.WINDOW_NORMAL)
 ant = Motion.Motion()
 ant.CenterHeadAndTail()
 ant.Stand()
+objectName = "bottle"
 # Have I found the object?
 iFoundIt = False
 # Has the swarm found the object?
-foundResult = False
-while not foundResult:
+completedPickup = False
+while not completedPickup:
     # Check to see if we found the desired object before continuing
-    # res = requests.get("http://144.39.216.38:3000/objectDetected")
-    # response = json.loads(res.text)
-    # print("Response: ", response)
+    res = requests.get("http://144.39.216.38:3000/objectDetected")
+    response = json.loads(res.text)
 
-    # temporary value while we aren't using the server
-    response = False
-
-    # Use bounding box to calculate movement needed 
-    if (response == True):
-        # camera dimentions are roughly (0,0) to (1300, 700)
-        pass
+    if (response == True and not iFoundIt):
+        # Another robot in the swarm has found the object, we are done
+        break
     
-        # If we are close enough to the desire object we no longer can use the camera so we can kill this while loop
-        if (False):
-            foundResult = True
-            break
-            
     # Rotate right until we find the object
     if(not iFoundIt):
         ant.RotateRightOne()
+
     # Start timer (for calculating frame rate)
     t1 = cv2.getTickCount()
-
     # Grab frame from video stream
     frame1 = videostream.read()
-
     # Acquire frame and resize to expected shape [1xHxWx3]
     frame = frame1.copy()
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     frame_resized = cv2.resize(frame_rgb, (width, height))
     input_data = np.expand_dims(frame_resized, axis=0)
-
     # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
     if floating_model:
         input_data = (np.float32(input_data) - input_mean) / input_std
-
     # Perform the actual detection by running the model with the image as input
     interpreter.set_tensor(input_details[0]['index'],input_data)
     interpreter.invoke()
-
     # Retrieve detection results
     boxes = interpreter.get_tensor(output_details[0]['index'])[0] # Bounding box coordinates of detected objects
     classes = interpreter.get_tensor(output_details[1]['index'])[0] # Class index of detected objects
@@ -245,15 +211,13 @@ while not foundResult:
 
     # Loop over all detections and draw detection box if confidence is above minimum threshold
     for i in range(len(scores)):
-        if ((scores[i] >= .2 and labels[int(classes[i])] == "bottle")):
+        if ((scores[i] >= .2 and labels[int(classes[i])] == objectName)):
             # Get bounding box coordinates and draw box
             ymin = int(max(1,(boxes[i][0] * imH)))
             xmin = int(max(1,(boxes[i][1] * imW)))
             ymax = int(min(imH,(boxes[i][2] * imH)))
             xmax = int(min(imW,(boxes[i][3] * imW)))
-            
             cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
-            
             # Draw label
             object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
             label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
@@ -261,7 +225,6 @@ while not foundResult:
             label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
             cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
             cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
-
             # Draw circle in center
             xcenter = xmin + (int(round((xmax - xmin) / 2)))
             ycenter = ymin + (int(round((ymax - ymin) / 2)))
@@ -270,11 +233,11 @@ while not foundResult:
             objectX = xcenter
 
             # Determine if we found the object we are looking for
-            if ((object_name == "bottle") and response == False and iFoundIt == False):
+            if ((object_name == objectName) and response == False and iFoundIt == False):
                 print("Found desired object!")
                 iFoundIt = True
-                # requests.post("http://144.39.216.38:3000/foundObject")
-            elif(iFoundIt and (object_name == "bottle")):
+                requests.post("http://144.39.216.38:3000/foundObject")
+            elif(iFoundIt and (object_name == objectName)):
                 boundingBox =  CalcBoundingBoxSize(xmin, xmax, ymin, ymax)
                 if(xcenter < 570):
                     ant.MinimalRotateLeftOne()
@@ -285,7 +248,7 @@ while not foundResult:
                 else: 
                     CheckToLowerHead(ant, boundingBox)
                     ant.WalkOneStep()
-                    foundResult = CheckToPerformPickup(ant, boundingBox)
+                    completedPickup = CheckToPerformPickup(ant, boundingBox)
                     break
 
     # Draw framerate in corner of frame
