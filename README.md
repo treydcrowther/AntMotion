@@ -10,7 +10,7 @@
 4. Run the following command to initialize the tflite-environment `source tflite-env/bin/activate`
 5. cd into `./object_detection`
 6. Run the command `python SSHObjectDetection.py --modeldir=coco_ssd_mobilenet_v1`
-7. The system will initialize, the Hexapod will stand, rotate until it finds the object and finally, go retreive the object
+7. The system will initialize, the Hexapod will rotate until it finds the object and go retrieve it
 
 #### Note
 The view from the Logitech Webcam can be viewed by connecting the Raspberry Pi to a display and running the same commands as above, with the exception of step 6
