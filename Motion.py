@@ -40,7 +40,7 @@ class Motion:
     ###############################################################################
     # Mandibles Servo Key
     # First letter: M = Mandibles
-    # Second letter: Servo (R = Rotation, L = Left Grip, R = Right Grip, T = Tilt)
+    # Second letter: Servo (Y = Yaw, R = Rotation, LG = Left Grip, RG = Right Grip, T = Tilt)
     ###############################################################################
     __MY = 12
     __MR = 13
