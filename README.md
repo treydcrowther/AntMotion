@@ -16,7 +16,7 @@
 1. clone `https://github.com/Jared-Wasson/piServer.git`
 2. Install npm
 3. run `npm i`
-3. In terminal run `run start`
+3. In terminal run `npm run start`
 4. Update `Detection_webcam.py` to use the current server IP address on lines: `179` and `238`
 
 ##### Note
