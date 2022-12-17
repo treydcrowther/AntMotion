@@ -12,6 +12,13 @@
 6. Run the command `python SSHObjectDetection.py --modeldir=coco_ssd_mobilenet_v1`
 7. The system will initialize, the Hexapod will rotate until it finds the object and go retrieve it
 
-#### Note
+#### Central Server Setup
+1. clone `https://github.com/Jared-Wasson/piServer.git`
+2. Install npm
+3. run `npm i`
+3. In terminal run `npm run start`
+4. Update `Detection_webcam.py` to use the current server IP address on lines: `179` and `238`
+
+##### Note
 The view from the Logitech Webcam can be viewed by connecting the Raspberry Pi to a display and running the same commands as above, with the exception of step 6
 where the command should be replaced with `python Detection_webcam.py --modeldir=coco_ssd_mobilenet_v1`
